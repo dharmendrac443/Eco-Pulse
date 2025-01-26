@@ -9,6 +9,7 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -90,12 +91,39 @@ class _RegistrationPageState extends State<RegistrationPage> {
   Widget _buildForm() {
     return Column(
       children: [
+        _buildNameField(),
+        const SizedBox(height: 16),
         _buildEmailField(),
         const SizedBox(height: 16),
         _buildPasswordField(),
         const SizedBox(height: 16),
         _buildConfirmPasswordField(),
       ],
+    );
+  }
+
+  Widget _buildNameField() {
+    return TextFormField(
+      controller: _nameController,
+      decoration: InputDecoration(
+        labelText: 'Name',
+        hintText: 'Enter your name',
+        hintStyle: const TextStyle(color: Colors.black26),
+        labelStyle: const TextStyle(color: Colors.blueGrey),
+        prefixIcon: const Icon(Icons.person, color: Colors.blueGrey),
+        filled: true,
+        fillColor: Colors.white.withAlpha(51),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: const BorderSide(color: Colors.green, width: 2.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: const BorderSide(color: Colors.greenAccent),
+        ),
+      ),
+      keyboardType: TextInputType.name,
+      style: const TextStyle(color: Colors.black),
     );
   }
 

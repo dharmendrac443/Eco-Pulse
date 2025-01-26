@@ -1,3 +1,6 @@
+import 'package:eco_pulse/Profile_page/profile_page.dart';
+import 'package:eco_pulse/login_Page/login_page.dart';
+import 'package:eco_pulse/registration_page/registration_page.dart';
 import 'package:eco_pulse/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Eco Pulse',
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: LoginPage(),
     );
   }
 }

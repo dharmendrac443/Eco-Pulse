@@ -112,28 +112,29 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
               height: double.infinity,
             ),
           ),
-          Positioned(
-            top: 26,
-            left: 16,
-            child: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-                size: 40,
-                weight: 100,
-                shadows: [
-                  BoxShadow(
-                    color: Colors.black45,
-                    offset: Offset(0, 2),
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
+          // Positioned(
+          //   top: 26,
+          //   left: 16,
+          //   child: IconButton(
+          //     icon: Icon(
+          //       Icons.arrow_back,
+          //       color: Colors.white,
+          //       size: 40,
+          //       weight: 100,
+          //       shadows: [
+          //         BoxShadow(
+          //           color: Colors.black45,
+          //           offset: Offset(0, 2),
+          //           blurRadius: 10,
+          //         ),
+          //       ],
+          //     ),
+          //     onPressed: () {
+          //       // Navigator.pop(context);
+          //       prin
+          //     },
+          //   ),
+          // ),
           Column(
             children: [
               // Header

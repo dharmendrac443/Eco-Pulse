@@ -1,5 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 
+import '../leaderboard/leaderboard.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
   @override
@@ -23,7 +25,7 @@ class _HomePageState extends State<HomePage> {
       case 1: // Contribute
         return _buildContributeContent();
       case 2: // Leaderboard
-        return _buildLeaderboardContent();
+        return LeaderboardScreen();
       case 3: // Challenges
         return _buildChallengesContent();
       default:
@@ -40,7 +42,8 @@ class _HomePageState extends State<HomePage> {
         children: [
           _buildInfoCard(
             title: 'User Contribution',
-            content: 'You’ve actively contributed to making the world a better place!',
+            content:
+                'You’ve actively contributed to making the world a better place!',
             color: Colors.white.withAlpha(40),
             borderColor: Colors.greenAccent,
           ),
@@ -64,11 +67,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildLeaderboardContent() {
-    return Center(
-      child: Text('Leaderboard Section'),
-    );
-  }
+  // Widget _buildLeaderboardContent() {
+  //   return Center(
+  //     child: Text('Leaderboard Section'),
+  //   );
+  // }
 
   Widget _buildChallengesContent() {
     return Center(
@@ -77,7 +80,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   // Info Card
-  Widget _buildInfoCard({required String title, required String content, required Color color, required Color borderColor}) {
+  Widget _buildInfoCard(
+      {required String title,
+      required String content,
+      required Color color,
+      required Color borderColor}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -98,7 +105,8 @@ class _HomePageState extends State<HomePage> {
         children: [
           Text(
             title,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+            style: TextStyle(
+                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           const SizedBox(height: 10),
           Text(
@@ -134,7 +142,10 @@ class _HomePageState extends State<HomePage> {
             child: Text.rich(
               TextSpan(
                 text: '$title: 20 Kg CO',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
                 children: [
                   TextSpan(
                     text: '2',
@@ -194,7 +205,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-              padding: const EdgeInsets.only(top: 40, left: 20, right: 20, bottom: 20),
+              padding: const EdgeInsets.only(
+                  top: 40, left: 20, right: 20, bottom: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

@@ -1,0 +1,1 @@
+ C:\\Users\\ajite\\Documents\\AJITESH\ MTECH\\projects\\flutter_android_app\\eco_pulse\\.dart_tool\\flutter_build\\9f10ce0303d9682f60681251fd95712c\\native_assets.yaml: 

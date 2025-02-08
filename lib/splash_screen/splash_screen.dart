@@ -1,5 +1,9 @@
-﻿import "package:eco_pulse/login_Page/login_page.dart";
-import "package:flutter/material.dart";
+﻿import 'package:eco_pulse/Profile_page/profile_page.dart';
+import 'package:eco_pulse/home_page/home_page.dart';
+import 'package:eco_pulse/login_Page/login_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,17 +16,37 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToLoginPage();
+    _checkAuthenticationStatus();
   }
 
-  void _navigateToLoginPage() {
+  void _checkAuthenticationStatus() async {
+    await Firebase.initializeApp();  // Ensure Firebase is initialized
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    // Force sign out to ensure we are checking the correct state
+    await auth.signOut();
+
+    // Check if user is logged in after sign-out
+    User? user = auth.currentUser;
+
+    // Delay for 3 seconds before navigating
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
+      if (user != null) {
+        // User is logged in, navigate to ProfilePage
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfilePage()),
+        );
+      } else {
+        // No user is logged in, navigate to LoginPage
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+      }
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

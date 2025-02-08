@@ -1,5 +1,9 @@
-﻿import 'package:eco_pulse/home_page/home_page.dart';
+﻿import 'package:eco_pulse/Profile_page/add_page.dart';
+import 'package:eco_pulse/Profile_page/profile_page.dart';
+import 'package:eco_pulse/home_page/home_page.dart';
 import 'package:eco_pulse/registration_page/registration_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -10,7 +14,50 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool visible = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    Firebase.initializeApp();
+  }
+
+  Future<void> _loginUser() async {
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      _showSnackBar('Please fill in all fields');
+      return;
+    }
+
+    try {
+      // Attempt user sign-in
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // print("User logged in: ${userCredential.user?.email}");
+      // Navigate to HomePage after successful login
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } catch (e) {
+      // print("Error during login: $e");
+      _showSnackBar('Login failed: $e');
+    }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +73,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         child: SingleChildScrollView(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 30.0, vertical: 60.0),
+            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 60.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -62,18 +108,18 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 40),
                 // Email Field
                 TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     labelText: 'Username',
                     hintText: 'Enter your Username',
-                    hintStyle: TextStyle(color: Colors.black26),
+                    hintStyle: const TextStyle(color: Colors.black26),
                     labelStyle: const TextStyle(color: Colors.blueGrey),
                     prefixIcon: const Icon(Icons.person, color: Colors.blueGrey),
                     filled: true,
                     fillColor: Colors.white.withAlpha(51),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide:
-                          const BorderSide(color: Colors.green, width: 2.0),
+                      borderSide: const BorderSide(color: Colors.green, width: 2.0),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
@@ -86,11 +132,12 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 16),
                 // Password Field
                 TextField(
+                  controller: _passwordController,
                   obscureText: visible,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     hintText: 'Enter your Password',
-                    hintStyle: TextStyle(color: Colors.black26),
+                    hintStyle: const TextStyle(color: Colors.black26),
                     labelStyle: const TextStyle(color: Colors.blueGrey),
                     prefixIcon: const Icon(Icons.lock, color: Colors.blueGrey),
                     suffixIcon: IconButton(
@@ -107,8 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                     fillColor: Colors.white.withAlpha(51),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide:
-                          const BorderSide(color: Colors.green, width: 2.0),
+                      borderSide: const BorderSide(color: Colors.green, width: 2.0),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
@@ -134,16 +180,10 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 30),
                 // Login Button
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const HomePage()),
-                    );
-                  },
+                  onPressed: _loginUser,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.yellow,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

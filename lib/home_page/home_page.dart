@@ -1,4 +1,6 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'package:eco_pulse/Profile_page/add_page.dart';
+import 'package:eco_pulse/Profile_page/profile_page.dart';
+import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,11 +23,11 @@ class _HomePageState extends State<HomePage> {
       case 0: // Home
         return _buildHomeContent();
       case 1: // Contribute
-        return _buildContributeContent();
+        return AddDataPage();
       case 2: // Leaderboard
         return _buildLeaderboardContent();
       case 3: // Challenges
-        return _buildChallengesContent();
+        return ProfilePage();
       default:
         return _buildHomeContent();
     }

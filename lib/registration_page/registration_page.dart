@@ -1,5 +1,8 @@
-﻿import 'package:eco_pulse/login_Page/login_page.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eco_pulse/login_Page/login_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';// Replace with your LoginPage file path
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
@@ -42,7 +45,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
               _buildLogo(),
               _buildHeader(),
               _buildForm(),
+              const SizedBox(height: 20),
               _buildRegisterButton(),
+              const SizedBox(height: 20),
               _buildLoginLink(),
             ],
           ),
@@ -65,9 +70,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   Widget _buildHeader() {
     return Column(
-      children: [
-        const SizedBox(height: 20),
-        const Text(
+      children: const [
+        SizedBox(height: 20),
+        Text(
           "Create Your Account",
           style: TextStyle(
             fontSize: 28,
@@ -75,15 +80,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
             color: Colors.limeAccent,
           ),
         ),
-        const SizedBox(height: 10),
-        const Text(
+        SizedBox(height: 10),
+        Text(
           "Join us to make a difference",
           style: TextStyle(
             fontSize: 16,
             color: Colors.white70,
           ),
         ),
-        const SizedBox(height: 40),
+        SizedBox(height: 40),
       ],
     );
   }
@@ -105,23 +110,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   Widget _buildNameField() {
     return TextFormField(
       controller: _nameController,
-      decoration: InputDecoration(
-        labelText: 'Name',
-        hintText: 'Enter your name',
-        hintStyle: const TextStyle(color: Colors.black26),
-        labelStyle: const TextStyle(color: Colors.blueGrey),
-        prefixIcon: const Icon(Icons.person, color: Colors.blueGrey),
-        filled: true,
-        fillColor: Colors.white.withAlpha(51),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: const BorderSide(color: Colors.green, width: 2.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: const BorderSide(color: Colors.greenAccent),
-        ),
-      ),
+      decoration: _inputDecoration('Name', Icons.person),
       keyboardType: TextInputType.name,
       style: const TextStyle(color: Colors.black),
     );
@@ -130,23 +119,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   Widget _buildEmailField() {
     return TextFormField(
       controller: _emailController,
-      decoration: InputDecoration(
-        labelText: 'Username',
-        hintText: 'Enter your Username',
-        hintStyle: const TextStyle(color: Colors.black26),
-        labelStyle: const TextStyle(color: Colors.blueGrey),
-        prefixIcon: const Icon(Icons.person, color: Colors.blueGrey),
-        filled: true,
-        fillColor: Colors.white.withAlpha(51),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: const BorderSide(color: Colors.green, width: 2.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: const BorderSide(color: Colors.greenAccent),
-        ),
-      ),
+      decoration: _inputDecoration('Email', Icons.email),
       keyboardType: TextInputType.emailAddress,
       style: const TextStyle(color: Colors.black),
     );
@@ -156,12 +129,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     return TextFormField(
       controller: _passwordController,
       obscureText: !_isPasswordVisible,
-      decoration: InputDecoration(
-        labelText: 'Password',
-        hintText: 'Enter your password',
-        hintStyle: const TextStyle(color: Colors.black26),
-        labelStyle: const TextStyle(color: Colors.blueGrey),
-        prefixIcon: const Icon(Icons.lock, color: Colors.blueGrey),
+      decoration: _inputDecoration('Password', Icons.lock).copyWith(
         suffixIcon: IconButton(
           icon: Icon(
             _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
@@ -172,16 +140,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
             });
           },
         ),
-        filled: true,
-        fillColor: Colors.white.withAlpha(51),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: const BorderSide(color: Colors.green, width: 2.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: const BorderSide(color: Colors.greenAccent),
-        ),
       ),
       style: const TextStyle(color: Colors.black),
     );
@@ -191,12 +149,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     return TextFormField(
       controller: _confirmPasswordController,
       obscureText: !_isConfirmPasswordVisible,
-      decoration: InputDecoration(
-        labelText: 'Confirm Password',
-        hintText: 'Re-enter your password',
-        hintStyle: const TextStyle(color: Colors.black26),
-        labelStyle: const TextStyle(color: Colors.blueGrey),
-        prefixIcon: const Icon(Icons.lock, color: Colors.blueGrey),
+      decoration: _inputDecoration('Confirm Password', Icons.lock).copyWith(
         suffixIcon: IconButton(
           icon: Icon(
             _isConfirmPasswordVisible
@@ -209,16 +162,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
             });
           },
         ),
-        filled: true,
-        fillColor: Colors.white.withAlpha(51),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: const BorderSide(color: Colors.green, width: 2.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: const BorderSide(color: Colors.greenAccent),
-        ),
       ),
       style: const TextStyle(color: Colors.black),
     );
@@ -226,16 +169,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   Widget _buildRegisterButton() {
     return ElevatedButton(
-      onPressed: () {
-        // Handle registration
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration successful')),
-        );
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginPage()),
-        );
-      },
+      onPressed: _registerUser,
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.yellow,
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
@@ -275,6 +209,81 @@ class _RegistrationPageState extends State<RegistrationPage> {
           ),
         ),
       ],
+    );
+  }
+
+  InputDecoration _inputDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      hintText: 'Enter your $label',
+      hintStyle: const TextStyle(color: Colors.black26),
+      labelStyle: const TextStyle(color: Colors.blueGrey),
+      prefixIcon: Icon(icon, color: Colors.blueGrey),
+      filled: true,
+      fillColor: Colors.white.withAlpha(51),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        borderSide: const BorderSide(color: Colors.green, width: 2.0),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        borderSide: const BorderSide(color: Colors.greenAccent),
+      ),
+    );
+  }
+
+  Future<void> _registerUser() async {
+    String name = _nameController.text.trim();
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
+    String confirmPassword = _confirmPasswordController.text.trim();
+
+    if (name.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      _showSnackBar('Please fill in all fields');
+      return;
+    }
+
+    if (password != confirmPassword) {
+      _showSnackBar('Passwords do not match');
+      return;
+    }
+
+    try {
+      // Attempt user registration
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      print("User registered: ${credential.user?.email}, UID: ${credential.user?.uid}");
+
+      // Save user details to Firestore
+      await FirebaseFirestore.instance.collection('users').doc(credential.user?.uid).set({
+        'name': name,
+        'email': email,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+      // print("User details saved to Firestore");
+
+      // Show success message
+      _showSnackBar('Registration successful!');
+
+      // Navigate to LoginPage
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
+    } catch (e) {
+      // print("Error during registration: $e");
+      _showSnackBar('Registration failed: $e');
+    }
+  }
+
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
     );
   }
 }

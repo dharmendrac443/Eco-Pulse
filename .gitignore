@@ -44,19 +44,20 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-android
-ios
-build
-linux
-macos
-test
-web
-windows
+# Ignore platform-specific build directories
+android/
+ios/
+build/
+linux/
+macos/
+web/
+windows/
+
+# Metadata and configuration files
 .metadata
 analysis_options.yaml
-eco_pusle.iml
+eco_pulse.iml
 readme.md
-.vscode
-.idea
-.dart_tool
-
+.vscode/
+.idea/
+.dart_tool/

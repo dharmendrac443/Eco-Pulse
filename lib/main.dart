@@ -1,5 +1,4 @@
 import 'package:eco_pulse/Profile_page/profile_page.dart';
-import 'package:eco_pulse/login_Page/login_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {

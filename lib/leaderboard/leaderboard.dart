@@ -52,7 +52,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
   void _loadMoreUsers() {
     setState(() {
-      print('${_displayedUsers}');
+      print('$_displayedUsers');
       if (_displayedUsers <= leaderboard.length) {
         _displayedUsers += 10;
       }

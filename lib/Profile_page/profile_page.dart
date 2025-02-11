@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -21,6 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
   late FirebaseFirestore _firestore;
   String? userName = '';
   String? userEmail = '';
+  File? _profileImage;
 
   @override
   void initState() {
@@ -28,6 +31,16 @@ class _ProfilePageState extends State<ProfilePage> {
     _auth = FirebaseAuth.instance;
     _firestore = FirebaseFirestore.instance;
     _checkUserAuthentication();
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
   }
 
   // Check if the user is authenticated and load the profile
@@ -42,7 +55,8 @@ class _ProfilePageState extends State<ProfilePage> {
     } else {
       // Fetch user data from Firestore
       try {
-        DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+        DocumentSnapshot userDoc =
+            await _firestore.collection('users').doc(user.uid).get();
         if (userDoc.exists) {
           setState(() {
             userName = userDoc['name'] ?? 'Name not available';
@@ -67,20 +81,6 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage('https://picsum.photos/200/300'),
-              radius: 16,
-            ),
-            SizedBox(width: 10),
-            Text('Profile'),
-          ],
-        ),
-        backgroundColor: Colors.teal,
-        elevation: 0,
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -106,33 +106,33 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _profileHeader() {
     return Stack(
       children: [
-        Container(
-          height: 150,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.teal, Colors.tealAccent],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+        Center(
+          child: Column(
+            children: [
+              SizedBox(height: 40),
+              GestureDetector(
+                onTap: _pickImage, // Open image picker on tap
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: _profileImage != null
+                      ? FileImage(_profileImage!) as ImageProvider
+                      : null,
+                  child: _profileImage == null
+                      ? Icon(Icons.person, size: 50) // Default icon
+                      : null,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                userName ?? 'Loading...',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                userEmail ?? 'Loading...',
+                style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+              ),
+            ],
           ),
-        ),
-        Column(
-          children: [
-            SizedBox(height: 50),
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage('https://picsum.photos/200/300'),
-            ),
-            SizedBox(height: 10),
-            Text(
-              userName ?? 'Loading...',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              userEmail ?? 'Loading...',
-              style: TextStyle(fontSize: 16, color: Colors.grey[200]),
-            ),
-          ],
         ),
       ],
     );
@@ -147,7 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
           icon: Icon(Icons.edit),
           label: Text('Edit Profile'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.teal,
+            // backgroundColor: Colors.teal,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -159,7 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
           icon: Icon(Icons.lock),
           label: Text('Change Password'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.redAccent,
+            // backgroundColor: Colors.redAccent,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -173,19 +173,22 @@ class _ProfilePageState extends State<ProfilePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          "Selected: ${DateFormat.yMMM().format(selectedDate)}",
-          style: TextStyle(fontSize: 18),
-        ),
+        // Text(
+        //   "Data for: ",
+        //   style: TextStyle(fontSize: 18),
+        // ),
         SizedBox(width: 10),
         ElevatedButton.icon(
           onPressed: () async {
-            setState(() => isLoading = true);
+            DateTime now = DateTime.now();
+            DateTime lastSelectableDate =
+                DateTime(now.year, now.month); // Current month only
+
             DateTime? picked = await showMonthPicker(
               context: context,
               initialDate: selectedDate,
               firstDate: DateTime(2000),
-              lastDate: DateTime(2100),
+              lastDate: lastSelectableDate, // Restrict future months
             );
             if (picked != null) {
               setState(() => selectedDate = picked);
@@ -193,9 +196,9 @@ class _ProfilePageState extends State<ProfilePage> {
             setState(() => isLoading = false);
           },
           icon: Icon(Icons.calendar_today),
-          label: Text("Select Month"),
+          label: Text("${DateFormat.yMMM().format(selectedDate)} Data"),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.teal,
+            // backgroundColor: Colors.teal,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -216,13 +219,17 @@ class _ProfilePageState extends State<ProfilePage> {
         .where('year', isEqualTo: selectedDate.year)
         .get();
 
-    Map<String, double> categoryAmounts = {}; // To aggregate amounts by category
+    Map<String, double> categoryAmounts =
+        {}; // To aggregate amounts by category
 
-    snapshot.docs.forEach((doc) {
+    for (var doc in snapshot.docs) {
       // Ensure that doc.data() returns a Map<String, dynamic>
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
       data.forEach((key, value) {
-        if (key != 'userId' && key != 'date' && key != 'month' && key != 'year') {
+        if (key != 'userId' &&
+            key != 'date' &&
+            key != 'month' &&
+            key != 'year') {
           // Aggregating values for each category
           if (categoryAmounts.containsKey(key)) {
             categoryAmounts[key] = categoryAmounts[key]! + value.toDouble();
@@ -231,8 +238,7 @@ class _ProfilePageState extends State<ProfilePage> {
           }
         }
       });
-    });
-
+    }
 
     List<ChartData> chartData = categoryAmounts.entries.map((entry) {
       return ChartData(entry.key, entry.value);
@@ -259,7 +265,8 @@ class _ProfilePageState extends State<ProfilePage> {
         }
 
         return SfCircularChart(
-          title: ChartTitle(text: 'Data for ${DateFormat.yMMM().format(selectedDate)}'),
+          title: ChartTitle(
+              /*text: 'Data for ${DateFormat.yMMM().format(selectedDate)}'*/),
           legend: Legend(isVisible: true),
           series: <DoughnutSeries<ChartData, String>>[
             DoughnutSeries<ChartData, String>(
@@ -278,8 +285,10 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _showEditProfileDialog(BuildContext context) {
-    TextEditingController nameController = TextEditingController(text: userName);
-    TextEditingController emailController = TextEditingController(text: userEmail);
+    TextEditingController nameController =
+        TextEditingController(text: userName);
+    TextEditingController emailController =
+        TextEditingController(text: userEmail);
 
     showDialog(
       context: context,
@@ -300,7 +309,8 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancel')),
+            TextButton(
+                onPressed: () => Navigator.pop(context), child: Text('Cancel')),
             ElevatedButton(
               onPressed: () async {
                 // Update Firestore with new name and email
@@ -339,7 +349,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (user != null) {
       try {
         await user.updateEmail(email);
-        await user.reload();  // Refresh the user object after updating the email
+        await user.reload(); // Refresh the user object after updating the email
       } catch (e) {
         // Handle any errors (e.g., invalid email format)
         print('Error updating email: $e');
@@ -378,11 +388,13 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancel')),
+            TextButton(
+                onPressed: () => Navigator.pop(context), child: Text('Cancel')),
             ElevatedButton(
               onPressed: () async {
                 // Handle password change
-                if (newPasswordController.text == confirmPasswordController.text) {
+                if (newPasswordController.text ==
+                    confirmPasswordController.text) {
                   await _changePassword(newPasswordController.text);
                   Navigator.pop(context);
                 } else {

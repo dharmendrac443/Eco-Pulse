@@ -1,49 +1,140 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({super.key});
+class ForgotPasswordPage extends StatefulWidget {
+  const ForgotPasswordPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
+  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController _emailController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void _printEmail() {
-    final email = _emailController.text;
-    print('Email: $email');
+  Future<void> _resetPassword() async {
+    String email = _emailController.text.trim();
+
+    if (email.isEmpty) {
+      _showSnackBar('Please enter your email');
+      return;
+    }
+
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      _showSnackBar('Password reset link sent to your email');
+    } catch (e) {
+      _showSnackBar('Error: $e');
+    }
   }
 
-  @override
-  void dispose() {
-    _emailController.dispose();
-    super.dispose();
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Forgot Password'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-              ),
+      body: Container(
+        constraints: const BoxConstraints.expand(),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xff82f4b1), Color(0xff30c67c)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 60.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 40),
+                const CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.white,
+                  child: Icon(
+                    Icons.lock_reset,
+                    size: 50,
+                    color: Color(0xff30c67c),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  "Reset Password",
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.limeAccent,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Enter your email to receive reset link",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white70,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 40),
+                TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    hintText: 'Enter your Email',
+                    hintStyle: const TextStyle(color: Colors.black26),
+                    labelStyle: const TextStyle(color: Colors.blueGrey),
+                    prefixIcon: const Icon(Icons.email, color: Colors.blueGrey),
+                    filled: true,
+                    fillColor: Colors.white.withAlpha(51),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.green, width: 2.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: const BorderSide(color: Colors.greenAccent),
+                    ),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(color: Colors.black),
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: _resetPassword,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.yellow,
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text(
+                    'Reset Password',
+                    style: TextStyle(
+                      color: Color(0xff30c67c),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    'Back to Login',
+                    style: TextStyle(color: Colors.blue, fontSize: 16),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _printEmail,
-              child: Text('Get Reset Link'),
-            ),
-          ],
+          ),
         ),
       ),
     );

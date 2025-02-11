@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AddDataPage extends StatefulWidget {
-  const AddDataPage({Key? key}) : super(key: key);
+  const AddDataPage({super.key});
 
   @override
   State<AddDataPage> createState() => _AddDataPageState();
@@ -16,6 +16,7 @@ class _AddDataPageState extends State<AddDataPage> {
     "Transport": TextEditingController(),
     "Cloth": TextEditingController(),
     "Food": TextEditingController(),
+    "Other": TextEditingController(),
   };
   bool isLoading = false;
 
@@ -145,16 +146,16 @@ class _AddDataPageState extends State<AddDataPage> {
                     SizedBox(height: 16),
                   ],
                 );
-              }).toList(),
+              }),
               isLoading
                   ? Center(child: CircularProgressIndicator())
                   : ElevatedButton(
                       onPressed: saveData,
-                      child: Text('Save Data'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.teal,
                         minimumSize: Size(double.infinity, 50),
                       ),
+                      child: Text('Save Data'),
                     ),
             ],
           ),

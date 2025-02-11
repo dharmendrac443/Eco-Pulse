@@ -1,5 +1,4 @@
-﻿import 'package:eco_pulse/Profile_page/add_page.dart';
-import 'package:eco_pulse/Profile_page/profile_page.dart';
+﻿import 'package:eco_pulse/forgot_password/forgot_password.dart';
 import 'package:eco_pulse/home_page/home_page.dart';
 import 'package:eco_pulse/registration_page/registration_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +15,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool visible = false;
+  bool visible = true;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
@@ -169,7 +168,10 @@ class _LoginPageState extends State<LoginPage> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      // Handle forgot password
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
+                      );
                     },
                     child: const Text(
                       'Forgot Password?',

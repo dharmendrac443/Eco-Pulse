@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="gcm_defaultSenderId" translatable="false">732829900420</string>
+    <string name="google_api_key" translatable="false">AIzaSyBkr5zKh1OS0sMElT_Pp7MHJ0gWux7BnPw</string>
+    <string name="google_app_id" translatable="false">1:732829900420:android:35a05e521797297402ecd1</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBkr5zKh1OS0sMElT_Pp7MHJ0gWux7BnPw</string>
+    <string name="google_storage_bucket" translatable="false">ecopulse-f52e3.firebasestorage.app</string>
+    <string name="project_id" translatable="false">ecopulse-f52e3</string>
     <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
         
         <item name="android:windowBackground">@drawable/launch_background</item>

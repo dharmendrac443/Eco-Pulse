@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
     FirebaseAuth auth = FirebaseAuth.instance;
 
     // Force sign out to ensure we are checking the correct state
-    await auth.signOut();
+    // await auth.signOut();
 
     // Check if user is logged in after sign-out
     User? user = auth.currentUser;
@@ -35,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
         // User is logged in, navigate to ProfilePage
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const ProfilePage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       } else {
         // No user is logged in, navigate to LoginPage

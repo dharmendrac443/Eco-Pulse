@@ -2,7 +2,7 @@
 import 'package:eco_pulse/login_Page/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';// Replace with your LoginPage file path
+// Replace with your LoginPage file path
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});

@@ -1,8 +1,10 @@
-﻿import 'package:eco_pulse/Profile_page/add_page.dart';
+﻿import 'package:eco_pulse/calculate/calculate.dart';
 import 'package:eco_pulse/Profile_page/profile_page.dart';
+import 'package:eco_pulse/challenges/challenges.dart';
 import 'package:flutter/material.dart';
-
 import '../leaderboard/leaderboard.dart';
+import '../components/custom_app_bar.dart';
+import '../components/navbar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,16 +21,24 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _onProfileTap() {
+    setState(() {
+      _currentIndex = 4; // Switch to the profile tab
+    });
+  }
+
   // Define content for each tab
   Widget _getBodyContent() {
     switch (_currentIndex) {
       case 0: // Home
         return _buildHomeContent();
       case 1: // Contribute
-        return AddDataPage();
+        return CalculateScreen();
       case 2: // Leaderboard
         return LeaderboardScreen();
       case 3: // Challenges
+        return ChallengesScreen();
+      case 4: // Profile
         return ProfilePage();
       default:
         return _buildHomeContent();
@@ -59,25 +69,6 @@ class _HomePageState extends State<HomePage> {
           _buildContributionCard('Transport', Icons.subway, Colors.blue),
         ],
       ),
-    );
-  }
-
-  // Other sections like Contribute, Leaderboard, and Challenges can be customized similarly
-  Widget _buildContributeContent() {
-    return Center(
-      child: Text('Contribute Section'),
-    );
-  }
-
-  // Widget _buildLeaderboardContent() {
-  //   return Center(
-  //     child: Text('Leaderboard Section'),
-  //   );
-  // }
-
-  Widget _buildChallengesContent() {
-    return Center(
-      child: Text('Challenges Section'),
     );
   }
 
@@ -166,105 +157,33 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Bottom Navigation Icon
-  Widget _buildNavIcon(IconData icon, int index) {
-    return IconButton(
-      icon: Icon(
-        icon,
-        color: _currentIndex == index ? Colors.white : Colors.white70,
-        size: _currentIndex == index ? 30 : 25,
-      ),
-      onPressed: () => _onItemTapped(index),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(onProfileTap: _onProfileTap),
       body: Container(
         // Full-screen gradient background
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xff1e3c72), Color(0xff2a5298)],
+            colors: [
+              Color.fromARGB(255, 70, 151, 12),
+              Color.fromARGB(64, 152, 108, 42)
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
         child: Column(
           children: [
-            // Header Section
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withAlpha(51),
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(20),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(20),
-                    blurRadius: 8,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.only(
-                  top: 40, left: 20, right: 20, bottom: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(
-                    Icons.eco,
-                    size: 40,
-                    color: Colors.greenAccent,
-                  ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.local_fire_department,
-                        size: 30,
-                        color: Colors.redAccent,
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        '0',
-                        style: TextStyle(fontSize: 24, color: Colors.white),
-                      ),
-                      const SizedBox(width: 15),
-                      Icon(
-                        Icons.person,
-                        size: 30,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
             // Content based on selected tab
             Expanded(
               child: _getBodyContent(),
             ),
 
             // Bottom Navigation Bar
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xff30c67c), Color(0xff82f4b1)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildNavIcon(Icons.home, 0),
-                  _buildNavIcon(Icons.add_circle, 1),
-                  _buildNavIcon(Icons.leaderboard, 2),
-                  _buildNavIcon(Icons.task, 3),
-                ],
-              ),
+            CustomNavBar(
+              currentIndex: _currentIndex,
+              onItemTapped: _onItemTapped,
             ),
           ],
         ),

@@ -15,7 +15,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool visible = true;
+  bool visible = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
       );
     } catch (e) {
       // print("Error during login: $e");
-      _showSnackBar('Login failed: $e');
+      _showSnackBar('Login failed: Invalid credentials');
     }
   }
 
@@ -132,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                 // Password Field
                 TextField(
                   controller: _passwordController,
-                  obscureText: visible,
+                  obscureText: !visible,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     hintText: 'Enter your Password',
@@ -141,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                     prefixIcon: const Icon(Icons.lock, color: Colors.blueGrey),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        visible ? Icons.visibility : Icons.visibility_off,
+                        visible ? Icons.visibility_off:Icons.visibility,
                       ),
                       onPressed: () {
                         setState(() {

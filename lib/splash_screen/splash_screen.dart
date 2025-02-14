@@ -1,4 +1,4 @@
-﻿import 'package:eco_pulse/Profile_page/profile_page.dart';
+﻿// import 'package:eco_pulse/Profile_page/profile_page.dart';
 import 'package:eco_pulse/home_page/home_page.dart';
 import 'package:eco_pulse/login_Page/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _checkAuthenticationStatus() async {
-    await Firebase.initializeApp();  // Ensure Firebase is initialized
+    await Firebase.initializeApp(); // Ensure Firebase is initialized
     FirebaseAuth auth = FirebaseAuth.instance;
 
     // Force sign out to ensure we are checking the correct state
@@ -46,7 +46,6 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     });
   }
-
 
   @override
   Widget build(BuildContext context) {

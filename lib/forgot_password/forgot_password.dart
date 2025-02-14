@@ -21,8 +21,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     }
 
     try {
-      await _auth.sendPasswordResetEmail(email: email);
-      _showSnackBar('Password reset link sent to your email');
+      FirebaseAuth.instance.fetchSignInMethodsForEmail(email).then((value) async {
+        if (value.isNotEmpty) {
+          await _auth.sendPasswordResetEmail(email: email);
+          _showSnackBar('Password reset link sent to your email');
+        } else {
+          _showSnackBar('Email not found');
+        }
+      });
+      // await _auth.sendPasswordResetEmail(email: email);
+      // _showSnackBar('Password reset link sent to your email');
     } catch (e) {
       _showSnackBar('Error: $e');
     }
@@ -48,7 +56,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         ),
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 60.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 30.0, vertical: 60.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -93,7 +102,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     fillColor: Colors.white.withAlpha(51),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(color: Colors.green, width: 2.0),
+                      borderSide:
+                          const BorderSide(color: Colors.green, width: 2.0),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
@@ -108,7 +118,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   onPressed: _resetPassword,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.yellow,
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

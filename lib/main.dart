@@ -1,4 +1,3 @@
-import 'package:eco_pulse/login_Page/login_page.dart';
 import 'package:eco_pulse/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';

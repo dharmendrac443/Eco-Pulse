@@ -226,6 +226,9 @@
             android:authorities="com.example.eco_pulse.androidx-startup"
             android:exported="false" >
             <meta-data
+                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+                android:value="androidx.startup" />
+            <meta-data
                 android:name="androidx.lifecycle.ProcessLifecycleInitializer"
                 android:value="androidx.startup" />
             <meta-data

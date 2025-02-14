@@ -9,6 +9,7 @@ plugins {
 }
 
 android {
+    namespace 'com.example.flutter_keyboard_visibility'
     namespace = "com.example.eco_pulse"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion

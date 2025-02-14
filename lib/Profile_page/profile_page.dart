@@ -1,7 +1,7 @@
 ﻿import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eco_pulse/home_page/home_page.dart';
+import 'package:eco_pulse/login_Page/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
@@ -94,10 +94,34 @@ class _ProfilePageState extends State<ProfilePage> {
                   _monthYearSelector(),
                   SizedBox(height: 24),
                   isLoading ? CircularProgressIndicator() : _chart(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  _Logout(),
                 ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _Logout() {
+    return ElevatedButton.icon(
+      onPressed: () async {
+        await _auth.signOut(); // Sign out the user
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+          (route) => false, // Remove all previous routes from the stack
+        );
+      },
+      icon: Icon(Icons.logout),
+      label: Text('Logout'),
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
     );
@@ -173,10 +197,10 @@ class _ProfilePageState extends State<ProfilePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Text(
-        //   "Data for: ",
-        //   style: TextStyle(fontSize: 18),
-        // ),
+        Text(
+          "Contribution : ",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
         SizedBox(width: 10),
         ElevatedButton.icon(
           onPressed: () async {
@@ -195,8 +219,21 @@ class _ProfilePageState extends State<ProfilePage> {
             }
             setState(() => isLoading = false);
           },
-          icon: Icon(Icons.calendar_today),
-          label: Text("${DateFormat.yMMM().format(selectedDate)} Data"),
+          // Text("Yours: "),
+          icon: Icon(Icons.calendar_month),
+          label: RichText(
+            text: TextSpan(
+              // text: 'Your\'s ',
+              style: DefaultTextStyle.of(context).style,
+              children: <TextSpan>[
+                TextSpan(
+                    text: DateFormat.yMMM().format(selectedDate),
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                // TextSpan(text: ' Data'),s
+              ],
+            ),
+          ),
+// Text("${DateFormat.yMMM().format(selectedDate)} Data"),
           style: ElevatedButton.styleFrom(
             // backgroundColor: Colors.teal,
             shape: RoundedRectangleBorder(
@@ -226,10 +263,7 @@ class _ProfilePageState extends State<ProfilePage> {
       // Ensure that doc.data() returns a Map<String, dynamic>
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
       data.forEach((key, value) {
-        if (key != 'userId' &&
-            key != 'date' &&
-            key != 'month' &&
-            key != 'year') {
+        if (['Electricity', 'Transport', 'Food', 'Water'].contains(key)) {
           // Aggregating values for each category
           if (categoryAmounts.containsKey(key)) {
             categoryAmounts[key] = categoryAmounts[key]! + value.toDouble();

@@ -2,6 +2,7 @@
 import 'package:eco_pulse/login_Page/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:country_picker/country_picker.dart';
 // Replace with your LoginPage file path
 
 class RegistrationPage extends StatefulWidget {
@@ -16,6 +17,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  String? _selectedCountryName;
+  String? _selectedCountryCode;
+  String? _selectedCountryFlag;
+
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
@@ -103,6 +108,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
         _buildPasswordField(),
         const SizedBox(height: 16),
         _buildConfirmPasswordField(),
+        const SizedBox(height: 16),
+        _buildCountryPicker(),
       ],
     );
   }
@@ -132,7 +139,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       decoration: _inputDecoration('Password', Icons.lock).copyWith(
         suffixIcon: IconButton(
           icon: Icon(
-            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            _isPasswordVisible ? Icons.visibility_off: Icons.visibility,
           ),
           onPressed: () {
             setState(() {
@@ -152,14 +159,36 @@ class _RegistrationPageState extends State<RegistrationPage> {
       decoration: _inputDecoration('Confirm Password', Icons.lock).copyWith(
         suffixIcon: IconButton(
           icon: Icon(
-            _isConfirmPasswordVisible
-                ? Icons.visibility
-                : Icons.visibility_off,
+            _isConfirmPasswordVisible ? Icons.visibility_off : Icons.visibility,
           ),
           onPressed: () {
             setState(() {
               _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
             });
+          },
+        ),
+      ),
+      style: const TextStyle(color: Colors.black),
+    );
+  }
+  Widget _buildCountryPicker() {
+    return TextFormField(
+      readOnly: true,
+      controller: TextEditingController(text: _selectedCountryName ?? 'Select Country'),
+      decoration: _inputDecoration('Country', Icons.public).copyWith(
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.arrow_drop_down),
+          onPressed: () {
+            showCountryPicker(
+              context: context,
+              onSelect: (Country country) {
+                setState(() {
+                  _selectedCountryName = country.name;
+                  _selectedCountryCode = country.countryCode;
+                  _selectedCountryFlag = country.flagEmoji;
+                });
+              },
+            );
           },
         ),
       ),
@@ -261,7 +290,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
       await FirebaseFirestore.instance.collection('users').doc(credential.user?.uid).set({
         'name': name,
         'email': email,
+        'countryName': _selectedCountryName ?? '',
+        'countryCode': _selectedCountryCode ?? '',
+        'countryFlag': _selectedCountryFlag ?? '',
         'createdAt': FieldValue.serverTimestamp(),
+        'totalContributions': 0.0,
       });
 
       // print("User details saved to Firestore");
@@ -279,8 +312,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       _showSnackBar('Registration failed: $e');
     }
   }
-
-
+  
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
